@@ -6,45 +6,45 @@ class EcoMarketAPI {
 
   // Inicializar datos de ejemplo
   initializeData() {
-    if (!localStorage.getItem(this.storageKey)) {
-      const initialProducts = [
-        {
-          id: 1,
-          name: 'Manzanas Orgánicas',
-          description: 'Manzanas frescas cultivadas sin pesticidas',
-          category: 'Alimentos',
-          type: 'Venta',
-          ecoPoints: 10,
-          image: 'apple.jpg',
-          available: true,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: 2,
-          name: 'Camiseta de Algodón Orgánico',
-          description: 'Camiseta 100% algodón orgánico',
-          category: 'Ropa',
-          type: 'Trueque',
-          ecoPoints: 15,
-          image: 'tshirt.jpg',
-          available: true,
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: 3,
-          name: 'Jabón Natural',
-          description: 'Jabón hecho a base de ingredientes naturales',
-          category: 'Hogar',
-          type: 'Donación',
-          ecoPoints: 5,
-          image: 'soap.jpg',
-          available: true,
-          createdAt: new Date().toISOString()
-        }
-      ];
-      localStorage.setItem(this.storageKey, JSON.stringify(initialProducts));
-    }
+  if (!localStorage.getItem(this.storageKey)) {
+    const initialProducts = [
+      {
+        id: 1,
+        name: 'Manzanas Orgánicas',
+        description: 'Manzanas frescas cultivadas sin pesticidas',
+        category: 'Alimentos',
+        type: 'Venta',
+        ecoPoints: 10,
+        image: 'assets/img/apple.jpg', // Ruta a la imagen local
+        available: true,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 2,
+        name: 'Camiseta de Algodón Orgánico',
+        description: 'Camiseta 100% algodón orgánico',
+        category: 'Ropa',
+        type: 'Trueque',
+        ecoPoints: 15,
+        image: 'assets/img/tshirt.jpg', // Ruta a la imagen local
+        available: true,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 3,
+        name: 'Jabón Natural',
+        description: 'Jabón hecho a base de ingredientes naturales',
+        category: 'Hogar',
+        type: 'Donación',
+        ecoPoints: 5,
+        image: 'assets/img/soap.jpg', // Ruta a la imagen local
+        available: true,
+        createdAt: new Date().toISOString()
+      }
+    ];
+    localStorage.setItem(this.storageKey, JSON.stringify(initialProducts));
   }
+}
 
   // Obtener todos los productos
   getProducts() {

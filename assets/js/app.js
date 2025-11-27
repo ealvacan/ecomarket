@@ -22,9 +22,20 @@ function loadProducts() {
 function createProductCard(product) {
   const card = document.createElement('div');
   card.className = 'col-md-4 mb-4';
+  
+  // Determinar la fuente de la imagen
+  let imageSrc;
+  if (product.image.startsWith('data:image')) {
+    // Es una Data URL (imagen subida por el usuario)
+    imageSrc = product.image;
+  } else {
+    // Es una imagen de la carpeta assets/img
+    imageSrc = `assets/img/${product.image}`;
+  }
+  
   card.innerHTML = `
     <div class="card product-card h-100">
-      <img src="assets/img/${product.image}" class="card-img-top" alt="${product.name}">
+      <img src="${imageSrc}" class="card-img-top" alt="${product.name}" style="height: 200px; object-fit: cover;">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start">
           <h5 class="card-title">${product.name}</h5>
@@ -53,7 +64,6 @@ function createProductCard(product) {
   `;
   return card;
 }
-
 // Obtener clase CSS para tipo de producto
 function getTypeBadgeClass(type) {
   switch(type) {
@@ -148,6 +158,12 @@ function showAddProductForm() {
             <label class="form-label">Puntos Eco</label>
             <input type="number" class="form-control" id="productEcoPoints" min="1" max="100" required>
           </div>
+          <!-- NUEVO: Input para imagen -->
+          <div class="mb-3">
+            <label class="form-label">Imagen del Producto</label>
+            <input type="file" class="form-control" id="productImage" accept="image/*">
+            <div id="imagePreview" class="mt-2"></div>
+          </div>
           <button type="submit" class="btn btn-eco">Guardar Producto</button>
           <button type="button" class="btn btn-secondary ms-2" onclick="hideAddProductForm()">Cancelar</button>
         </form>
@@ -159,8 +175,10 @@ function showAddProductForm() {
   
   // Configurar submit del formulario
   document.getElementById('addProductForm').addEventListener('submit', handleAddProduct);
+  
+  // NUEVO: Configurar vista previa de imagen
+  document.getElementById('productImage').addEventListener('change', handleImagePreview);
 }
-
 // Manejar agregar producto
 function handleAddProduct(e) {
   e.preventDefault();
@@ -185,8 +203,72 @@ function handleAddProduct(e) {
     alert('Error al agregar el producto');
   }
 }
+// Función para mostrar vista previa de la imagen
+function handleImagePreview(event) {
+  const file = event.target.files[0];
+  const preview = document.getElementById('imagePreview');
+  
+  if (file) {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      preview.innerHTML = `
+        <img src="${e.target.result}" class="img-thumbnail mt-2" style="max-height: 200px;">
+        <div class="form-text">Vista previa de la imagen seleccionada</div>
+      `;
+    };
+    
+    reader.readAsDataURL(file);
+  } else {
+    preview.innerHTML = '';
+  }
+}
 
 // Ocultar formulario de agregar producto
-function hideAddProductForm() {
-  document.getElementById('addProductFormContainer').innerHTML = '';
+function handleAddProduct(e) {
+  e.preventDefault();
+  
+  // Obtener datos del formulario
+  const productData = {
+    name: document.getElementById('productName').value,
+    description: document.getElementById('productDescription').value,
+    category: document.getElementById('productCategory').value,
+    type: document.getElementById('productType').value,
+    ecoPoints: parseInt(document.getElementById('productEcoPoints').value),
+    available: true
+  };
+  
+  // NUEVO: Manejar la imagen
+  const imageFile = document.getElementById('productImage').files[0];
+  
+  if (imageFile) {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      // Agregar la imagen como Data URL
+      productData.image = e.target.result;
+      
+      // Guardar el producto
+      saveProduct(productData);
+    };
+    
+    reader.readAsDataURL(imageFile);
+  } else {
+    // Si no se seleccionó imagen, usar la imagen por defecto
+    productData.image = 'default-product.jpg';
+    saveProduct(productData);
+  }
+}
+
+// Función auxiliar para guardar el producto
+function saveProduct(productData) {
+  try {
+    window.ecoMarketAPI.createProduct(productData);
+    loadProducts();
+    hideAddProductForm();
+    alert('Producto agregado correctamente');
+  } catch (error) {
+    console.error('Error al agregar producto:', error);
+    alert('Error al agregar el producto');
+  }
 }
