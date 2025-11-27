@@ -272,3 +272,8 @@ function saveProduct(productData) {
     alert('Error al agregar el producto');
   }
 }
+
+// Función para ocultar el formulario de agregar producto
+function hideAddProductForm() {
+  document.getElementById('addProductFormContainer').innerHTML = '';
+}
